@@ -1,0 +1,109 @@
+from abc import ABC, abstractmethod
+
+# ----------------------------------------------------------------------------------
+# INTERFACE (CLASSE ABSTRATA)
+# ----------------------------------------------------------------------------------
+class IFuncionario(ABC):
+    """
+    Interface que define o contrato para todos os funcionários do restaurante.
+    Qualquer classe que representar um funcionário DEVE implementar estes métodos.
+    """
+
+    @abstractmethod
+    def calcular_salario(self):
+        """
+        Método abstrato para calcular o salário do funcionário.
+        A implementação irá variar para cada tipo de funcionário.
+        """
+        pass
+
+    @abstractmethod
+    def obter_descricao_cargo(self):
+        """
+        Método abstrato para retornar a descrição das tarefas do funcionário.
+        """
+        pass
+
+# ----------------------------------------------------------------------------------
+# CLASSES CONCRETAS
+# ----------------------------------------------------------------------------------
+class Chef(IFuncionario):
+    """
+    Classe concreta que representa um Chef de Cozinha.
+    Implementa a interface IFuncionario.
+    """
+    def __init__(self, nome: str, salario_base: float, bonus: float):
+        self.nome = nome
+        self.salario_base = salario_base
+        self.bonus = bonus
+
+    def calcular_salario(self) -> float:
+        """
+        Calcula o salário do Chef somando o salário base e o bônus.
+        """
+        return self.salario_base + self.bonus
+
+    def obter_descricao_cargo(self) -> str:
+        """
+        Retorna a descrição das responsabilidades do Chef.
+        """
+        return f"Chef: {self.nome}. Responsável por criar pratos e gerenciar a cozinha."
+
+class Garcom(IFuncionario):
+    """
+    Classe concreta que representa um Garçom.
+    Implementa a interface IFuncionario.
+    """
+    def __init__(self, nome: str, salario_base: float, gorjetas: float):
+        self.nome = nome
+        self.salario_base = salario_base
+        self.gorjetas = gorjetas
+
+    def calcular_salario(self) -> float:
+        """
+        Calcula o salário do Garçom somando o salário base e as gorjetas.
+        """
+        return self.salario_base + self.gorjetas
+
+    def obter_descricao_cargo(self) -> str:
+        """
+        Retorna a descrição das responsabilidades do Garçom.
+        """
+        return f"Garçom: {self.nome}. Responsável por atender os clientes e servir as mesas."
+
+# ----------------------------------------------------------------------------------
+# DEMONSTRAÇÃO DE POLIMORFISMO
+# ----------------------------------------------------------------------------------
+def processar_folha_pagamento(funcionarios: list[IFuncionario]):
+    """
+    Esta função demonstra o polimorfismo.
+    Ela recebe uma lista de objetos que são do tipo IFuncionario (podem ser Chefs ou Garçons)
+    e os trata de forma uniforme, sem precisar saber qual é a classe concreta de cada um.
+    """
+    print("--- Folha de Pagamento do Restaurante ---")
+    custo_total = 0.0
+    for funcionario in funcionarios:
+        salario = funcionario.calcular_salario()
+        descricao = funcionario.obter_descricao_cargo()
+        print(f"{descricao}")
+        print(f"Salário a ser pago: R$ {salario:.2f}\n")
+        custo_total += salario
+
+    print("-----------------------------------------")
+    print(f"Custo Total da Folha de Pagamento: R$ {custo_total:.2f}")
+    print("-----------------------------------------")
+
+
+# --- Execução Principal ---
+if __name__ == "__main__":
+    # Criando objetos de diferentes classes (Chef e Garcom)
+    chef1 = Chef(nome="Ana", salario_base=5000.0, bonus=1200.0)
+    garcom1 = Garcom(nome="Carlos", salario_base=2500.0, gorjetas=850.0)
+    garcom2 = Garcom(nome="Mariana", salario_base=2500.0, gorjetas=980.0)
+
+    # Criando uma lista de funcionários. Note que a lista contém objetos
+    # de tipos diferentes (Chef, Garcom), mas todos são tratados como IFuncionario.
+    lista_de_funcionarios = [chef1, garcom1, garcom2]
+
+    # Chamando a função polimórfica para processar a folha de pagamento
+    processar_folha_pagamento(lista_de_funcionarios)
